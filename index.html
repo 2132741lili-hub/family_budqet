@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1B7A4E">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Бюджет">
+  <meta name="description" content="Калькулятор бюджета семьи для iPhone">
+  <title>Семейный бюджет</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <link rel="icon" href="./icons/icon-192.png" type="image/png">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div id="app">
+    <section id="screen-home" class="screen active">
+      <div class="month">
+        <button type="button" id="prev-month" aria-label="Предыдущий месяц">‹</button>
+        <h1 id="month-title">Март 2026</h1>
+        <button type="button" id="next-month" aria-label="Следующий месяц">›</button>
+      </div>
+      <div class="card">
+        <p class="muted">Остаток семьи</p>
+        <div id="balance" class="big">0 ₽</div>
+        <div class="row between" style="margin-top:12px">
+          <div>
+            <p class="muted">Доходы</p>
+            <strong id="income" class="plus">0 ₽</strong>
+          </div>
+          <div class="right">
+            <p class="muted">Расходы</p>
+            <strong id="expense" class="minus">0 ₽</strong>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="card grow">
+          <p class="muted">На сегодня</p>
+          <strong id="daily">0 ₽</strong>
+          <p class="muted" id="days-left">0 дн.</p>
+        </div>
+        <div class="card grow">
+          <p class="muted">В копилках</p>
+          <strong id="saved">0 ₽</strong>
+          <p class="muted" id="pigs-count">0 шт.</p>
+        </div>
+      </div>
+      <h2>Расходы по категориям</h2>
+      <div id="expense-bars"></div>
+      <h2>Последние операции</h2>
+      <div id="recent-ops"></div>
+    </section>
+
+    <section id="screen-ops" class="screen">
+      <h1>Операции</h1>
+      <p class="muted" id="ops-month"></p>
+      <div class="row" style="margin:12px 0">
+        <button type="button" class="chip on" data-filter="all">Все</button>
+        <button type="button" class="chip" data-filter="INCOME">Доходы</button>
+        <button type="button" class="chip" data-filter="EXPENSE">Расходы</button>
+      </div>
+      <div id="ops-list"></div>
+      <button type="button" class="btn" id="add-op">Добавить операцию</button>
+    </section>
+
+    <section id="screen-pigs" class="screen">
+      <h1>Копилки</h1>
+      <p class="muted" id="pigs-total"></p>
+      <div id="pigs-list"></div>
+      <button type="button" class="btn" id="add-pig">Новая копилка</button>
+    </section>
+
+    <section id="screen-more" class="screen">
+      <h1>Ещё</h1>
+      <div class="card">
+        <p><strong>Тема оформления</strong></p>
+        <p class="muted">Две темы: светлая и тёмная. Выбор сохраняется на телефоне.</p>
+        <div class="row" style="margin-top:12px">
+          <button type="button" class="chip" id="theme-light">Светлая</button>
+          <button type="button" class="chip" id="theme-dark">Тёмная</button>
+        </div>
+      </div>
+      <div class="card">
+        <p><strong>Категории</strong></p>
+        <p class="muted">Полная настройка: создание, иконка, цвет, переименование и удаление.</p>
+        <div id="cats-list"></div>
+        <button type="button" class="btn ghost" id="add-cat">Новая категория</button>
+      </div>
+      <div class="card">
+        <p><strong>Пользовательское соглашение</strong></p>
+        <p class="muted">Ещё раз открыть условия использования.</p>
+        <button type="button" class="btn ghost" id="open-agreement">Открыть соглашение</button>
+      </div>
+      <div class="card">
+        <p><strong>О приложении</strong></p>
+        <p class="muted">Семейный бюджет — локальный PWA для iPhone. Данные хранятся только на устройстве.</p>
+      </div>
+    </section>
+
+    <nav class="tabbar" aria-label="Нижняя панель">
+      <button type="button" class="on" data-tab="home"><span class="ico">⌂</span>Главная</button>
+      <button type="button" data-tab="ops"><span class="ico">⇄</span>Операции</button>
+      <button type="button" data-tab="pigs"><span class="ico">☺</span>Копилки</button>
+      <button type="button" data-tab="more"><span class="ico">···</span>Ещё</button>
+    </nav>
+  </div>
+
+  <div id="agreement" class="overlay">
+    <h1>Пользовательское соглашение</h1>
+    <p class="muted" id="agreement-lead">Перед началом работы примите условия.</p>
+    <div class="legal" id="agreement-text"></div>
+    <div class="check" id="agreement-check-wrap">
+      <input id="agreement-check" type="checkbox">
+      <label for="agreement-check" style="margin:0">Я прочитал(а) и принимаю условия</label>
+    </div>
+    <button type="button" class="btn" id="accept-agreement" disabled>Принимаю</button>
+    <button type="button" class="btn ghost hidden" id="close-agreement">Назад</button>
+  </div>
+
+  <div id="sheet" class="sheet" hidden>
+    <div class="sheet-card" id="sheet-body"></div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
